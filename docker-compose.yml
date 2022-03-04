@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  keycloak:
+    image: "jboss/keycloak:16.1.0"
+    restart: always
+    environment:
+      DB_VENDOR: h2
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /tmp/realm-export.json
+      DEBUG: "true"
+      DEBUG_PORT: '*:8787'
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8787:8787"
+    entrypoint:
+      - /opt/jboss/tools/docker-entrypoint.sh
+      - -Dkeycloak.profile.feature.upload_scripts=enabled
+    volumes:
+      - ./deployments/:/opt/jboss/keycloak/standalone/deployments/
+      - ./realm-export.json:/tmp/realm-export.json
